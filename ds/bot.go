@@ -11,7 +11,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/Nico-14/rocket-credits-backend/services"
+	"github.com/Nico-14/rlcr-backend/services"
 	"github.com/diamondburned/arikawa/bot"
 	"github.com/diamondburned/arikawa/discord"
 )

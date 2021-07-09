@@ -5,10 +5,10 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/Nico-14/rocket-credits-backend/controllers"
-	"github.com/Nico-14/rocket-credits-backend/db"
-	"github.com/Nico-14/rocket-credits-backend/ds"
-	"github.com/Nico-14/rocket-credits-backend/services"
+	"github.com/Nico-14/rlcr-backend/controllers"
+	"github.com/Nico-14/rlcr-backend/db"
+	"github.com/Nico-14/rlcr-backend/ds"
+	"github.com/Nico-14/rlcr-backend/services"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
 )
