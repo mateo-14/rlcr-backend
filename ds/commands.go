@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Nico-14/rocket-credits-backend/models"
-	"github.com/Nico-14/rocket-credits-backend/models/orderm"
+	"github.com/Nico-14/rlcr-backend/models"
+	"github.com/Nico-14/rlcr-backend/models/orderm"
 	"github.com/diamondburned/arikawa/discord"
 	"github.com/diamondburned/arikawa/gateway"
 )

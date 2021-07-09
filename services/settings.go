@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"cloud.google.com/go/firestore"
-	"github.com/Nico-14/rocket-credits-backend/models"
+	"github.com/Nico-14/rlcr-backend/models"
 )
 
 type ISettingsService interface {

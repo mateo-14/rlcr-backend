@@ -8,9 +8,9 @@ import (
 	"time"
 
 	"cloud.google.com/go/firestore"
-	"github.com/Nico-14/rocket-credits-backend/db"
-	"github.com/Nico-14/rocket-credits-backend/models"
-	"github.com/Nico-14/rocket-credits-backend/models/orderm"
+	"github.com/Nico-14/rlcr-backend/db"
+	"github.com/Nico-14/rlcr-backend/models"
+	"github.com/Nico-14/rlcr-backend/models/orderm"
 	"github.com/diamondburned/arikawa/discord"
 	gonanoid "github.com/matoous/go-nanoid"
 )
