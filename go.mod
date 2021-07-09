@@ -1,5 +1,6 @@
 module github.com/Nico-14/rlcr-backend
 
+// +heroku goVersion go1.16
 go 1.16
 
 require (
