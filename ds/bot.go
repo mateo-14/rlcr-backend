@@ -10,7 +10,6 @@ import (
 	"os"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/Nico-14/rlcr-backend/services"
 	"github.com/diamondburned/arikawa/bot"
@@ -35,14 +34,6 @@ func Connect(services *services.Services) {
 		return ""
 	}
 
-	// go Client.updateActivity()
-}
-
-func (b *Bot) updateActivity() {
-	for {
-		// b.PresenceSet(nil, discord.Presence{User: b.Ready.User, Game: &discord.Activity{}})
-		time.Sleep(time.Minute)
-	}
 }
 
 // getOAuthToken returns token and refreshToken
