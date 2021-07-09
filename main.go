@@ -1,0 +1,68 @@
+package main
+
+import (
+	"fmt"
+	"log"
+	"net/http"
+
+	"github.com/Nico-14/rocket-credits-backend/controllers"
+	"github.com/Nico-14/rocket-credits-backend/db"
+	"github.com/Nico-14/rocket-credits-backend/ds"
+	"github.com/Nico-14/rocket-credits-backend/services"
+	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
+)
+
+type CustomRouter struct {
+	*mux.Router
+}
+
+func (r CustomRouter) HandleController(prefix string, controller controllers.IController) {
+	controller.Handle(prefix, r.Router)
+}
+
+func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+	defer fmt.Println("Exit")
+
+	//DB connect
+	fbClient := db.New()
+
+	//Services
+	settingsService := services.NewSettingsService(fbClient.Client)
+	usersService := services.NewUsersService(fbClient)
+	services := &services.Services{SettSvc: settingsService, UsrSvc: usersService}
+
+	//Connect to external resources
+	ds.Connect(services)
+
+	//Router init and config
+	cr := CustomRouter{Router: mux.NewRouter()}
+	cr.StrictSlash(true)
+	cr.Use(mux.CORSMethodMiddleware(cr.Router))
+	cr.Use(middlewareCors)
+
+	//Handle router controllers
+	cr.HandleController("api", controllers.NewSettingsController("/settings", services))
+	cr.HandleController("api", controllers.NewAuthController("/auth", fbClient))
+	cr.HandleController("api", controllers.NewOrdersController("/orders", services))
+
+	fmt.Println("HTTP Server on port 8080")
+	log.Fatal(http.ListenAndServe("127.0.0.1:8080", cr))
+}
+
+func middlewareCors(next http.Handler) http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, req *http.Request) {
+			w.Header().Set("Access-Control-Allow-Origin", "*")
+			w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, Access-Control-Allow-Headers, X-Requested-With")
+			if req.Method == "OPTIONS" {
+				w.WriteHeader(http.StatusOK)
+				return
+			}
+			next.ServeHTTP(w, req)
+		})
+}
