@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/Nico-14/rlcr-backend/controllers"
 	"github.com/Nico-14/rlcr-backend/db"
@@ -50,8 +51,13 @@ func main() {
 	cr.HandleController("api", controllers.NewAuthController("/auth", fbClient))
 	cr.HandleController("api", controllers.NewOrdersController("/orders", services))
 
-	fmt.Println("HTTP Server on port 8080")
-	log.Fatal(http.ListenAndServe("127.0.0.1:8080", cr))
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
+	fmt.Println("HTTP Server on port " + port)
+	log.Fatal(http.ListenAndServe(":"+port, cr))
 }
 
 func middlewareCors(next http.Handler) http.Handler {
