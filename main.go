@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/Nico-14/rlcr-backend/controllers"
 	"github.com/Nico-14/rlcr-backend/db"
@@ -20,6 +21,14 @@ type CustomRouter struct {
 
 func (r CustomRouter) HandleController(prefix string, controller controllers.IController) {
 	controller.Handle(prefix, r.Router)
+}
+
+func avoidSleep() {
+	for {
+		fmt.Println("Fetching avoid sleep")
+		http.Get(os.Getenv("ENDPOINT"))
+		time.Sleep(time.Minute)
+	}
 }
 
 func main() {
@@ -50,12 +59,16 @@ func main() {
 	cr.HandleController("api", controllers.NewSettingsController("/settings", services))
 	cr.HandleController("api", controllers.NewAuthController("/auth", fbClient))
 	cr.HandleController("api", controllers.NewOrdersController("/orders", services))
+	cr.HandleFunc("/sleep", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprint(w, "OK")
+	})
 
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
 	}
 
+	go avoidSleep()
 	fmt.Println("HTTP Server on port " + port)
 	log.Fatal(http.ListenAndServe(":"+port, cr))
 }

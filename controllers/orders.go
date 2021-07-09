@@ -107,7 +107,7 @@ func (c *OrdersController) addOrder(w http.ResponseWriter, r *http.Request) {
 		Color:       discord.Color(0x8B5CF6),
 		Title:       "Pedido realizado",
 		URL:         url,
-		Description: fmt.Sprintf("**__Has realizado un pedido de %s de %v créditos a ARS$ %v__**\n\n• El pedido debe ser confirmado por un moderador. Una vez confirmado nos contactaremos por DM para realizar la transacción.\n• Si tenés algún problema o necesitas ayuda usa el comando **!ayuda** o contacta con un moderador en nuestro [canal de discord](%s).\n• Usa el comando **!pedidos** para ver la lista con los últimos pedidos.\n\n[Abrir pedido](%s)", value, order.Credits, order.Price, os.Getenv("DS_CHANNEL"), url),
+		Description: fmt.Sprintf("**__Has realizado un pedido de %s de %v créditos a ARS$ %v__**\n\n• El pedido debe ser confirmado por un moderador. Una vez confirmado nos contactaremos por DM para realizar la transacción.\n• Si tenés algún problema o necesitas ayuda usa el comando **!ayuda** o contacta con un moderador en nuestro [canal de discord](%s).\n• Usa el comando **!pedidos** para ver la lista con los últimos pedidos.\n\n[Abrir pedido](%s)", value, order.Credits, order.Price, os.Getenv("DS_CHANNEL_INVITE_URL"), url),
 	}
 
 	ds.Client.SendMessage(dmc.ID, "", embed)
