@@ -1,4 +1,4 @@
-module github.com/Nico-14/rocket-credits-backend
+module github.com/Nico-14/rlcr-backend
 
 go 1.16
 

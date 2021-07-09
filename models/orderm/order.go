@@ -5,8 +5,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/Nico-14/rocket-credits-backend/models"
-	"github.com/Nico-14/rocket-credits-backend/util"
+	"github.com/Nico-14/rlcr-backend/models"
+	"github.com/Nico-14/rlcr-backend/util"
 	gonanoid "github.com/matoous/go-nanoid"
 )
 
