@@ -25,7 +25,7 @@ func (r CustomRouter) HandleController(prefix string, controller controllers.ICo
 
 func avoidSleep() {
 	for {
-		time.Sleep(time.Minute * 30)
+		time.Sleep(time.Minute * 25)
 		fmt.Println("Fetching avoid sleep")
 		if res, err := http.Get(os.Getenv("ENDPOINT")); err == nil {
 			fmt.Printf("Response StatusCode avoid sleep: %v\n", res.StatusCode)
