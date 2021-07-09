@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/Nico-14/rocket-credits-backend/db"
+	"github.com/Nico-14/rlcr-backend/db"
 	"github.com/gorilla/mux"
 )
 

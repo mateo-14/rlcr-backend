@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/Nico-14/rocket-credits-backend/middlewares"
-	"github.com/Nico-14/rocket-credits-backend/models"
-	"github.com/Nico-14/rocket-credits-backend/services"
+	"github.com/Nico-14/rlcr-backend/middlewares"
+	"github.com/Nico-14/rlcr-backend/models"
+	"github.com/Nico-14/rlcr-backend/services"
 	"github.com/gorilla/mux"
 )
 
