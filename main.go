@@ -44,7 +44,7 @@ func main() {
 	fbClient := db.New()
 
 	//Services
-	settingsService := services.NewSettingsService(fbClient.Client)
+	settingsService := services.NewSettingsService(fbClient)
 	usersService := services.NewUsersService(fbClient)
 	services := &services.Services{SettSvc: settingsService, UsrSvc: usersService}
 
