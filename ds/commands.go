@@ -52,3 +52,44 @@ func (b *Bot) Pedidos(m *gateway.MessageCreateEvent) (string, error) {
 
 	return "", errors.New("")
 }
+
+func (b *Bot) Ayuda(m *gateway.MessageCreateEvent) (string, error) {
+	embed := &discord.Embed{
+		Timestamp:   discord.Timestamp(time.Now()),
+		Color:       discord.Color(0x8B5CF6),
+		Title:       "Ayuda",
+		Description: fmt.Sprintf("**__Lista de comandos__**\n\n• !pedidos **-** Muestra la lista con los últimos pedidos\n• !info **-** Muestra la información actual sobre el precio de los créditos y transacciones totales\n\n• Contacta con un moderador en nuestro [canal de discord](%s) si tenés algún problema o consulta.", os.Getenv("DS_CHANNEL_INVITE_URL")),
+	}
+
+	b.SendMessage(m.ChannelID, "", embed)
+	return "", errors.New("")
+}
+
+func (b *Bot) Info(m *gateway.MessageCreateEvent) (string, error) {
+	embed := &discord.Embed{
+		Timestamp: discord.Timestamp(time.Now()),
+		Color:     discord.Color(0x8B5CF6),
+		Title:     "Información de la tienda",
+		Fields: []discord.EmbedField{
+			{
+				Name:  "Precio de venta",
+				Value: "$100 x 100cr",
+			},
+			{
+				Name:  "Precio de compra",
+				Value: "$75 x 100cr",
+			},
+			{
+				Name:  "Ventas realizadas",
+				Value: "0",
+			},
+			{
+				Name:  "Compras realizadas",
+				Value: "0",
+			},
+		},
+	}
+
+	b.SendMessage(m.ChannelID, "", embed)
+	return "", errors.New("")
+}
