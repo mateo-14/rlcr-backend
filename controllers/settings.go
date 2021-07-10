@@ -25,7 +25,7 @@ func NewSettingsController(prefix string, services *services.Services) *Settings
 func (c *SettingsController) Handle(prefix string, router *mux.Router) {
 	c.Controller.Handle(prefix, router)
 	c.router.HandleFunc("/", c.getConfig).Methods(http.MethodGet)
-	c.router.HandleFunc("/", middlewares.VerifyToken(c.updateConfig)).Methods(http.MethodPut)
+	c.router.HandleFunc("/", middlewares.Adapt(http.HandlerFunc(c.updateConfig), middlewares.VerifyToken()).ServeHTTP).Methods(http.MethodPut)
 }
 
 func (c *SettingsController) getConfig(w http.ResponseWriter, r *http.Request) {

@@ -77,13 +77,13 @@ func main() {
 
 func middlewareCors(next http.Handler) http.Handler {
 	return http.HandlerFunc(
-		func(w http.ResponseWriter, req *http.Request) {
+		func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Access-Control-Allow-Origin", "*")
 			w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, Access-Control-Allow-Headers, X-Requested-With")
-			if req.Method == "OPTIONS" {
+			if r.Method == "OPTIONS" {
 				w.WriteHeader(http.StatusOK)
 				return
 			}
-			next.ServeHTTP(w, req)
+			next.ServeHTTP(w, r)
 		})
 }

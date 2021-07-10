@@ -33,7 +33,7 @@ func NewAuthController(prefix string, dbClient *db.Client) *AuthController {
 func (c *AuthController) Handle(prefix string, router *mux.Router) {
 	c.Controller.Handle(prefix, router)
 	c.router.HandleFunc("/", c.auth).Methods(http.MethodPost, http.MethodOptions)
-	c.router.HandleFunc("/", middlewares.VerifyToken(c.authWithToken)).Methods(http.MethodGet)
+	c.router.HandleFunc("/", middlewares.Adapt(http.HandlerFunc(c.authWithToken), middlewares.VerifyToken()).ServeHTTP).Methods(http.MethodGet)
 }
 
 func (c *AuthController) auth(w http.ResponseWriter, r *http.Request) {
