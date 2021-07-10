@@ -5,12 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"strconv"
-	"strings"
 	"time"
 
-	"github.com/Nico-14/rlcr-backend/models"
-	"github.com/Nico-14/rlcr-backend/models/orderm"
 	"github.com/diamondburned/arikawa/discord"
 	"github.com/diamondburned/arikawa/gateway"
 )
@@ -70,112 +66,4 @@ func (b *Bot) waitResp(ctx context.Context, m *gateway.MessageCreateEvent) inter
 		b.SendMessage(m.ChannelID, "Pedido cancelado ❌", nil)
 	}
 	return r
-}
-
-func (b *Bot) Creditos(m *gateway.MessageCreateEvent) (string, error) {
-	settings, err := b.s.SettSvc.Get(b.Context.Context())
-	if err != nil {
-		return "", err
-	}
-
-	if _, err := b.SendMessage(m.ChannelID, ":thinking: Querés comprar o vender créditos? Responde con **comprar** o **vender**", nil); err != nil {
-		return "", err
-	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
-	defer cancel()
-
-	r := b.waitResp(ctx, m)
-	if r == nil {
-		return "", errors.New("")
-	}
-
-	ev := r.(*gateway.MessageCreateEvent)
-	if ev.Content != "comprar" && ev.Content != "vender" {
-		return ":thinking: Mmm... no entendí tu respuesta", nil
-	}
-
-	mode := strings.ToLower(ev.Content)
-	order := orderm.Order{}
-	if mode == "comprar" {
-		order.Mode = orderm.Buy
-	} else {
-		order.Mode = orderm.Sell
-	}
-
-	var max int
-	if order.Mode == orderm.Buy {
-		max = settings.MaxSell
-	} else {
-		max = settings.MaxBuy
-	}
-
-	if _, err := b.SendMessage(m.ChannelID, fmt.Sprintf(":thinking: Cuántos créditos vas a %s? (Mínimo **100**, máximo **%v**)", mode, max), nil); err != nil {
-		return "", err
-	}
-
-	ctx, cancel = context.WithTimeout(context.Background(), time.Second*5)
-	defer cancel()
-
-	r = b.waitResp(ctx, m)
-	if r == nil {
-		return "", errors.New("")
-	}
-
-	ev = r.(*gateway.MessageCreateEvent)
-	cr, err := strconv.ParseInt(ev.Content, 10, 32)
-	if err != nil {
-		return ":face_with_raised_eyebrow: Todavía no soy lo suficientemente inteligente como para reconocer ese \"número\"", nil
-	}
-
-	if cr < 100 {
-		return fmt.Sprintf(":neutral_face: El mínimo de créditos para %s es de 100", mode), nil
-	}
-
-	if int(cr) > max {
-		return fmt.Sprintf(":neutral_face: El máximo de créditos para %s es de %v", mode, max), nil
-	}
-
-	order.Credits = int(cr)
-	order.Sanitize(settings)
-
-	msg, err := b.SendMessage(m.ChannelID, fmt.Sprintf(":dollar: Vas a %s %v créditos a ARS$ %v. Reacciona al mensaje con ✅ para confirmar tu pedido", mode, order.Credits, order.Price), nil)
-	if err != nil {
-		return "", err
-	}
-
-	err = b.React(m.ChannelID, msg.ID, "✅")
-	if err != nil {
-		return "", err
-	}
-
-	ctx, cancel = context.WithTimeout(context.Background(), time.Second*5)
-	defer cancel()
-
-	r = b.WaitFor(ctx, func(i interface{}) bool {
-		reac, ok := i.(*gateway.MessageReactionAddEvent)
-		if !ok {
-			return false
-		}
-		return reac.Emoji.APIString() == "✅" && reac.UserID == m.Author.ID
-	})
-
-	if r != nil {
-		err := b.s.UsrSvc.AddOrder(b.Context.Context(), &models.User{ID: m.Author.ID}, &order)
-		if err != nil {
-			return fmt.Sprintf("🥴 Ocurrió un error al realizar el pedido. Error: %s", err.Error()), nil
-		}
-
-		t, err := b.s.UsrSvc.GenerateOrdersToken(b.Context.Context(), m.Author.ID)
-		if err != nil {
-			return fmt.Sprintf("🥴 Ocurrió un error al realizar el pedido. Error: %s", err.Error()), nil
-		}
-
-		return fmt.Sprintf("Pedido confirmado ✅\n%s/orders/%s?t=%s", os.Getenv("FRONTEND_URL"), order.ID, t), nil
-	} else {
-		b.SendMessage(m.ChannelID, "Pedido cancelado ❌", nil)
-		b.Unreact(m.ChannelID, msg.ID, "✅")
-	}
-
-	return "", errors.New("")
 }
