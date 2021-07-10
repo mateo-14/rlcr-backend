@@ -1,7 +1,6 @@
 package ds
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"os"
@@ -52,18 +51,4 @@ func (b *Bot) Pedidos(m *gateway.MessageCreateEvent) (string, error) {
 	b.SendMessage(m.ChannelID, "", embed)
 
 	return "", errors.New("")
-}
-
-func (b *Bot) waitResp(ctx context.Context, m *gateway.MessageCreateEvent) interface{} {
-	r := b.WaitFor(ctx, func(i interface{}) bool {
-		mg, ok := i.(*gateway.MessageCreateEvent)
-		if !ok {
-			return false
-		}
-		return mg.Author.ID == m.Author.ID
-	})
-	if r == nil {
-		b.SendMessage(m.ChannelID, "Pedido cancelado ❌", nil)
-	}
-	return r
 }
