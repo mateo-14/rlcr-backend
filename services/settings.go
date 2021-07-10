@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"cloud.google.com/go/firestore"
+	"github.com/Nico-14/rlcr-backend/db"
 	"github.com/Nico-14/rlcr-backend/models"
 )
 
@@ -13,10 +14,10 @@ type ISettingsService interface {
 }
 
 type SettingsService struct {
-	db *firestore.Client
+	db *db.Client
 }
 
-func NewSettingsService(db *firestore.Client) *SettingsService {
+func NewSettingsService(db *db.Client) *SettingsService {
 	return &SettingsService{db}
 }
 

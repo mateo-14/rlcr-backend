@@ -24,7 +24,7 @@ type AuthController struct {
 }
 
 func NewAuthController(prefix string, dbClient *db.Client) *AuthController {
-	c := &AuthController{}
+	c := &AuthController{dbClient: dbClient}
 	c.Controller = &Controller{Prefix: prefix}
 	return c
 }
