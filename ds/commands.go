@@ -11,6 +11,11 @@ import (
 )
 
 func (b *Bot) Pedidos(m *gateway.MessageCreateEvent) (string, error) {
+	dmc, err := b.CreatePrivateChannel(m.Author.ID)
+	if err != nil {
+		return "", err
+	}
+
 	embed := &discord.Embed{
 		Timestamp: discord.Timestamp(time.Now()),
 		Color:     discord.Color(0x8B5CF6),
@@ -48,8 +53,11 @@ func (b *Bot) Pedidos(m *gateway.MessageCreateEvent) (string, error) {
 		embed.Description = "Últimos pedidos"
 	}
 
-	b.SendMessage(m.ChannelID, "", embed)
+	_, err = b.SendMessage(dmc.ID, "", embed)
 
+	if err == nil && m.ChannelID != dmc.ID {
+		return "Esta información es privada, hablemos por DM... 🤫", nil
+	}
 	return "", errors.New("")
 }
 
