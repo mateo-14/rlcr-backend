@@ -126,6 +126,7 @@ func (c *OrdersController) getOrders(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusUnauthorized)
 		}
 	} else {
+		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(orders)
 	}
 }
@@ -142,6 +143,7 @@ func (c *OrdersController) getOrder(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusUnauthorized)
 		}
 	} else {
+		w.Header().Set("Content-Type", "application/json")
 		u, _ := ds.Client.User(uid)
 		order.DsUsername = fmt.Sprintf("%s#%s", u.Username, u.Discriminator)
 		json.NewEncoder(w).Encode(order)

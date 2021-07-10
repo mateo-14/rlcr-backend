@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/Nico-14/rlcr-backend/db"
+	"github.com/Nico-14/rlcr-backend/middlewares"
 	"github.com/gorilla/mux"
 )
 
@@ -32,6 +33,7 @@ func NewAuthController(prefix string, dbClient *db.Client) *AuthController {
 func (c *AuthController) Handle(prefix string, router *mux.Router) {
 	c.Controller.Handle(prefix, router)
 	c.router.HandleFunc("/", c.auth).Methods(http.MethodPost, http.MethodOptions)
+	c.router.HandleFunc("/", middlewares.VerifyToken(c.authWithToken)).Methods(http.MethodGet)
 }
 
 func (c *AuthController) auth(w http.ResponseWriter, r *http.Request) {
@@ -56,17 +58,23 @@ func (c *AuthController) auth(w http.ResponseWriter, r *http.Request) {
 	if hash, found := m["password"]; found {
 		if verifyPassword(*authBody.Password, hash.(string)) {
 			token, err := generateToken(time.Hour)
-
 			if err == nil {
-				authResponse := AuthResponse{Token: token}
-				b, err := json.Marshal(authResponse)
-				if err == nil {
-					w.Header().Set("Content-Type", "application/json")
-					w.Write(b)
-					return
-				}
+				w.Header().Set("Content-Type", "application/json")
+				json.NewEncoder(w).Encode(&AuthResponse{Token: token})
+				return
 			}
 		}
+	}
+
+	http.Error(w, "Unauthorized", http.StatusUnauthorized)
+}
+
+func (c *AuthController) authWithToken(w http.ResponseWriter, r *http.Request) {
+	token, err := generateToken(time.Hour)
+	if err == nil {
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(&AuthResponse{Token: token})
+		return
 	}
 
 	http.Error(w, "Unauthorized", http.StatusUnauthorized)
