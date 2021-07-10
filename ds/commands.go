@@ -58,7 +58,7 @@ func (b *Bot) Ayuda(m *gateway.MessageCreateEvent) (string, error) {
 		Timestamp:   discord.Timestamp(time.Now()),
 		Color:       discord.Color(0x8B5CF6),
 		Title:       "Ayuda",
-		Description: fmt.Sprintf("**__Lista de comandos__**\n\n• !pedidos **-** Muestra la lista con los últimos pedidos\n• !info **-** Muestra la información actual sobre el precio de los créditos y transacciones totales\n\n• Contacta con un moderador en nuestro [canal de discord](%s) si tenés algún problema o consulta.", os.Getenv("DS_CHANNEL_INVITE_URL")),
+		Description: fmt.Sprintf("**__Lista de comandos__**\n• **!pedidos** **-** Muestra la lista con los últimos pedidos\n• **!info** **-** Muestra la información actual sobre el precio de los créditos y transacciones totales\n\n* Contacta con un moderador en nuestro [canal de discord](%s) si tenés algún problema o consulta.", os.Getenv("DS_CHANNEL_INVITE_URL")),
 	}
 
 	b.SendMessage(m.ChannelID, "", embed)
@@ -66,18 +66,38 @@ func (b *Bot) Ayuda(m *gateway.MessageCreateEvent) (string, error) {
 }
 
 func (b *Bot) Info(m *gateway.MessageCreateEvent) (string, error) {
+	sts, err := b.s.SettSvc.Get(b.Context.Context())
 	embed := &discord.Embed{
 		Timestamp: discord.Timestamp(time.Now()),
 		Color:     discord.Color(0x8B5CF6),
 		Title:     "Información de la tienda",
-		Fields: []discord.EmbedField{
+	}
+
+	if err != nil {
+		embed.Description = "Hubo un problema al cargar la información"
+	} else {
+		var sellTxt, buyText string
+
+		if sts.SellEnabled {
+			sellTxt = fmt.Sprintf("$%v x 100cr", sts.CreditSellValue*100)
+		} else {
+			sellTxt = "Venta deshabilitada"
+		}
+
+		if sts.BuyEnabled {
+			buyText = fmt.Sprintf("$%v x 100cr", sts.CreditBuyValue*100)
+		} else {
+			buyText = "Compra deshabilitada"
+		}
+
+		embed.Fields = []discord.EmbedField{
 			{
 				Name:  "Precio de venta",
-				Value: "$100 x 100cr",
+				Value: sellTxt,
 			},
 			{
 				Name:  "Precio de compra",
-				Value: "$75 x 100cr",
+				Value: buyText,
 			},
 			{
 				Name:  "Ventas realizadas",
@@ -87,7 +107,7 @@ func (b *Bot) Info(m *gateway.MessageCreateEvent) (string, error) {
 				Name:  "Compras realizadas",
 				Value: "0",
 			},
-		},
+		}
 	}
 
 	b.SendMessage(m.ChannelID, "", embed)
