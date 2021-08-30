@@ -24,9 +24,12 @@ func NewSettingsService(db *db.Client) *SettingsService {
 func (s *SettingsService) Get(ctx context.Context) (*models.Settings, error) {
 	var settings models.Settings
 
-	dsnap, _ := s.db.Collection("settings").Doc("default").Get(ctx)
-	err := dsnap.DataTo(&settings)
+	dsnap, err := s.db.Collection("settings").Doc("default").Get(ctx)
+	if err != nil {
+		return nil, err
+	}
 
+	err = dsnap.DataTo(&settings)
 	return &settings, err
 }
 

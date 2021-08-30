@@ -47,19 +47,19 @@ func (c *OrdersController) addOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if order.Credits == 0 || order.Code == "" {
-		http.Error(w, "Incomplete body", http.StatusBadRequest)
-		return
-	}
-
 	settings, err := c.s.SettSvc.Get(r.Context())
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	uid, token, rtoken, err := ds.Client.GetUserIdByCode(order.Code, fmt.Sprintf("%s/redirect", os.Getenv("FRONTEND_URL")))
+	order.Sanitize(settings)
+	if !order.IsValid() {
+		http.Error(w, "Validation error", http.StatusBadRequest)
+		return
+	}
 
+	uid, token, rtoken, err := ds.Client.GetUserIdByCode(order.Code, fmt.Sprintf("%s/redirect", os.Getenv("FRONTEND_URL")))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
@@ -82,7 +82,6 @@ func (c *OrdersController) addOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	order.Sanitize(settings)
 	if err := c.s.UsrSvc.AddOrder(r.Context(), &models.User{ID: uid, RefreshToken: rtoken}, &order); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
