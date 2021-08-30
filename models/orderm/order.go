@@ -73,3 +73,12 @@ func (m *Order) Sanitize(settings *models.Settings) {
 		m.Price = float32(m.Credits) * settings.CreditBuyValue
 	}
 }
+
+func (m *Order) IsValid() bool {
+	return len(m.Code) > 20 &&
+		len(m.Code) < 40 &&
+		len(m.Account) >= 3 &&
+		len(m.Account) <= 64 &&
+		((m.PaymentMethodId == 0 && len(m.Cvu) == 22 && len(m.DNI) >= 8 && len(m.DNI) < 12) ||
+			(m.PaymentMethodId != 0 && len(m.PaymentAccount) > 4 && len(m.PaymentAccount) <= 64))
+}

@@ -72,7 +72,7 @@ func main() {
 
 	go avoidSleep()
 	fmt.Println("HTTP Server on port " + port)
-	log.Fatal(http.ListenAndServe(":"+port, cr))
+	log.Fatal(http.ListenAndServe("127.0.0.1:"+port, cr))
 }
 
 func middlewareCors(next http.Handler) http.Handler {
