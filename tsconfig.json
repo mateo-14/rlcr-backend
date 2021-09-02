@@ -1,0 +1,10 @@
+{
+  "extends": "@tsconfig/node14/tsconfig.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "resolveJsonModule": true,
+    "typeRoots": ["@types", "./node_modules/@types"]
+  },
+  "include": ["src/**/*", "@types/index.d.ts"],
+  "exclude": ["node_modules", "**/*.test.ts", "dist"]
+}

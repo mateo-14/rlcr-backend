@@ -2,11 +2,11 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "",
-  "main": "src/index.js",
+  "main": "src/index.ts",
   "scripts": {
-    "start": "node ./src/index.js",
-    "dev": "nodemon ./src/index.js",
-    "test": "jest"
+    "dev": "nodemon --files ./src/index.ts",
+    "start": "rimraf ./dist && tsc --build && node dist/index.js",
+    "test": "PORT=8081 jest --watchAll"
   },
   "repository": {
     "type": "git",
@@ -20,15 +20,28 @@
   },
   "homepage": "https://github.com/Nico-14/rlcr-backend#readme",
   "dependencies": {
+    "@discordjs/rest": "^0.1.0-canary.0",
+    "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
+    "discord-api-types": "^0.22.0",
     "discord.js": "^13.1.0",
+    "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "express-validator": "^6.12.1",
-    "firebase": "^9.0.0"
+    "firebase-admin": "^9.11.1",
+    "nanoid": "^3.1.25",
+    "node-fetch": "^2.6.1"
   },
   "devDependencies": {
+    "@tsconfig/node14": "^1.0.1",
+    "@types/cookie-parser": "^1.4.2",
+    "@types/cors": "^2.8.12",
+    "@types/express": "^4.17.13",
+    "@types/node": "^16.7.8",
+    "@types/node-fetch": "^2.5.12",
     "jest": "^27.1.0",
     "nodemon": "^2.0.12",
-    "supertest": "^6.1.6"
+    "supertest": "^6.1.6",
+    "typescript": "^4.4.2"
   }
 }
