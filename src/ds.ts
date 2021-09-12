@@ -181,17 +181,16 @@ const oauth2ByCode = (code: string): Promise<string> => {
   params.append('grant_type', 'authorization_code');
   params.append('code', code);
   params.append('redirect_uri', `${process.env.FRONTEND_URL}/ds_redirect`);
-
   return fetch(`${process.env.DS_API_ENDPOINT}/oauth2/token`, {
     method: 'post',
     body: params,
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
   })
-    .then((response) => response.json())
     .then((response) => {
-      if (!response.ok) throw new Error(`${response.status} ${JSON.stringify(response)}`);
-      else return response.access_token as string;
-    });
+      if (response.ok) return response.json();
+      else throw new Error(`${response.status} ${response.statusText}`);
+    })
+    .then((response) => response.access_token as string);
 };
 
 const getUserByToken = (token: string): Promise<User> => {

@@ -13,9 +13,14 @@ app.use(
   cors({
     credentials: true,
     origin: (origin, callback) =>
-      origin && whitelist?.indexOf(origin) !== -1 ? callback(null, true) : callback(new Error('Not allowed by CORS')),
+      !origin
+        ? callback(null, true)
+        : whitelist?.indexOf(origin) !== -1
+        ? callback(null, true)
+        : callback(new Error('Not allowed by CORS')),
   })
 );
+
 app.use(express.json());
 app.use(cookieParser());
 

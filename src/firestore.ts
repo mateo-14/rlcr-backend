@@ -12,7 +12,6 @@ const options = {
   authProviderX509CertUrl: process.env.FIREBASE_auth_provider_x509_cert_url,
   clientC509CertUrl: process.env.FIREBASE_client_x509_cert_url,
 };
-console.log(options);
 
 admin.initializeApp({
   credential: admin.credential.cert(options),
