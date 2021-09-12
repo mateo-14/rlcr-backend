@@ -5,8 +5,7 @@
   "main": "src/index.ts",
   "scripts": {
     "dev": "nodemon --files ./src/index.ts",
-    "start": "rimraf ./dist && tsc --build && node dist/index.js",
-    "test": "PORT=8081 jest --watchAll"
+    "start": "tsc --build && node dist/index.js"
   },
   "repository": {
     "type": "git",
@@ -41,9 +40,7 @@
     "@types/node": "^16.7.8",
     "@types/node-fetch": "^2.5.12",
     "@types/validator": "^13.6.3",
-    "jest": "^27.1.0",
     "nodemon": "^2.0.12",
-    "supertest": "^6.1.6",
     "typescript": "^4.4.2"
   }
 }
