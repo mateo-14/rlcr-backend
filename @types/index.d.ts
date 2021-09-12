@@ -1,18 +1,39 @@
-declare namespace Express {
-  interface Request {
-    userID: string;
-  }
-}
+import { PaymentMethodID, OrderStatus, OrderMode } from './index';
 
-interface Order {
-  id: string;
-  userID: string;
-  credits: string;
-  paymentMethodId: string;
-  mode: number;
-  dni: string;
-  account: string;
-  paymentAccount?: string;
-  cvuAlias: string;
-  createdAt: Date;
+declare global {
+  declare namespace Express {
+    interface Request {
+      userID: string;
+    }
+  }
+
+  export interface PaymentMethod {
+    id: PaymentMethodID;
+    name: string;
+  }
+
+  export interface Settings {
+    buyEnabled: boolean;
+    sellEnabled: boolean;
+    creditBuyValue: number;
+    creditSellValue: number;
+    maxBuy: number;
+    maxSell: number;
+    paymentMethods: PaymentMethod[];
+  }
+
+  export interface Order {
+    id: string;
+    userID: string;
+    credits: number;
+    price: number;
+    paymentMethodID: PaymentMethodID;
+    mode: OrderMode;
+    dni?: string;
+    account: string;
+    paymentAccount?: string;
+    cvuAlias?: string;
+    createdAt: number;
+    status: OrderStatus;
+  }
 }

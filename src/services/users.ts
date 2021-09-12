@@ -1,13 +1,30 @@
 import firestore from '../firestore';
-import { client, dsRest } from '../ds';
-import { Routes } from 'discord-api-types/v9';
-import { RawUserData } from 'discord.js/typings/rawDataTypes';
 import { User } from 'discord.js';
 
-export const addOrUpdateUser = (id: string, token: string) => {
+export const addOrUpdate = (user: User) => {
+  return firestore
+    .collection('users')
+    .doc(user.id)
+    .set({ username: user.username, avatar: user.avatar, discriminator: user.discriminator }, { merge: true });
+};
+
+export const getData = (id: string) => {
   return firestore
     .collection('users')
     .doc(id)
-    .set({})
-    .then(() => dsRest.put(Routes.guildMember(process.env.GUILD_ID!, id), { body: { access_token: token } }));
+    .get()
+    .then((docSnap) => {
+      if (docSnap.exists) {
+        return docSnap.data();
+      } else {
+        throw new Error('User does not exists');
+      }
+    });
+};
+
+export const getAll = () => {
+  return firestore
+    .collection('users')
+    .get()
+    .then((querySnap) => querySnap.docs.map((docSnap) => ({ ...docSnap.data(), id: docSnap.id })));
 };

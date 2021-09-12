@@ -1,17 +1,60 @@
 import { Request, Response } from 'express';
+import { validationResult } from 'express-validator';
+import { start } from 'repl';
 import { sendNewOrderMsg } from '../ds';
-import { createOrder } from '../services/orders';
+import * as ordersService from '../services/orders';
+import { GetAllOrdersQuery, getAll } from '../services/orders';
 
 export const addOrder = async (req: Request, res: Response) => {
-  //TODO add validation
-  const order = req.body as Order;
-  try {
-    const createdOrder = await createOrder({ ...order, userID: req.userID });
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.mapped() });
+  }
 
+  try {
+    const order = req.body as Order;
+    const createdOrder = await ordersService.createOrder({ ...order, userID: req.userID });
     await sendNewOrderMsg(createdOrder);
 
     res.json(createdOrder);
   } catch (err) {
-    res.send(err).status(500);
+    console.error(err);
+    res.status(500).send(err);
   }
+};
+
+export const getOrders = (req: Request, res: Response) => {
+  if (typeof req.query.startAfter === 'string' || !req.query.startAfter) {
+    ordersService
+      .getOrders(req.userID, req.query.startAfter)
+      .then((orders) => res.json(orders))
+      .catch((err) => res.send(err).status(500));
+  } else {
+    res.sendStatus(400);
+  }
+};
+
+export const getOrder = (req: Request, res: Response) => {
+  ordersService
+    .getOrder(req.userID, req.params.id)
+    .then((order) => {
+      res.json(order);
+    })
+    .catch(() => {
+      res.sendStatus(404);
+    });
+};
+
+export const getAllOrders = (req: Request, res: Response) => {
+  const query = req.query as GetAllOrdersQuery;
+  if (query.status) query.status = query.status.map((status) => parseInt(status.toString()));
+
+  getAll(query)
+    .then((orders) => {
+      res.json(orders);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.sendStatus(500);
+    });
 };

@@ -18,4 +18,6 @@ admin.initializeApp({
   credential: admin.credential.cert(options),
 });
 
-export default admin.firestore();
+const firestore = admin.firestore();
+firestore.settings({ ignoreUndefinedProperties: true });
+export default firestore;

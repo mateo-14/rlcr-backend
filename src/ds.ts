@@ -2,6 +2,8 @@ import { Client, Intents, MessageActionRow, MessageButton, MessageEmbed, User } 
 
 import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v9';
+import { URLSearchParams } from 'url';
+import fetch from 'node-fetch';
 
 const commands = [
   {
@@ -159,7 +161,7 @@ const sendNewOrderMsg = (order: Order) => {
       .setTimestamp(new Date()).setDescription(`**__Has realizado un pedido de ${
       order.mode === 0 ? 'compra' : 'venta'
     } de ${order.credits} créditos a ARS$ ${'precio'}__**\n
-      • El pedido debe ser confirmado por un moderador. Una vez confirmado nos contactaremos por DM para realizar la transacción.
+      • En breve nos contactaremos por DM para realizar la transacción.
       • Si tenés algún problema o necesitas ayuda usa el comando **/ayuda** o contacta con un moderador en nuestro canal de discord.
       • Usa el comando **/pedidos** para ver la lista con los últimos pedidos.
       `);
@@ -171,4 +173,38 @@ const sendNewOrderMsg = (order: Order) => {
     user.send({ embeds: [embed], components: [row] });
   });
 };
-export { client, rest as dsRest, sendNewOrderMsg };
+
+const oauth2ByCode = (code: string): Promise<string> => {
+  const params = new URLSearchParams();
+  params.append('client_id', process.env.CLIENT_ID!);
+  params.append('client_secret', process.env.CLIENT_SECRET!);
+  params.append('grant_type', 'authorization_code');
+  params.append('code', code);
+  params.append('redirect_uri', `${process.env.FRONTEND_URL}/ds_redirect`);
+
+  return fetch(`${process.env.DS_API_ENDPOINT}/oauth2/token`, {
+    method: 'post',
+    body: params,
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+  })
+    .then((response) => response.json())
+    .then((response) => {
+      if (!response.ok) throw new Error(`${response.status} ${JSON.stringify(response)}`);
+      else return response.access_token as string;
+    });
+};
+
+const getUserByToken = (token: string): Promise<User> => {
+  return rest
+    .get(Routes.user(), {
+      auth: false,
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    .then((user) => user as User);
+};
+
+const addUserToGuild = (id: string, token: string) => {
+  return rest.put(Routes.guildMember(process.env.GUILD_ID!, id), { body: { access_token: token } });
+};
+
+export { client, sendNewOrderMsg, oauth2ByCode, addUserToGuild, getUserByToken };
