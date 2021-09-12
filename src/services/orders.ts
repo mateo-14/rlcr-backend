@@ -74,8 +74,7 @@ export const getAll = (query: GetAllOrdersQuery): Promise<Order[]> => {
     : firestore.collectionGroup('orders');
 
   if (query.orderBy) fsQuery = fsQuery.orderBy(query.orderBy, query.order);
-  else fsQuery = fsQuery.orderBy('createdAt', 'desc');
-
+  else fsQuery = fsQuery.orderBy('createdAt', query.order || 'desc');
   if (query.status) fsQuery = fsQuery.where('status', 'in', query.status);
   if (query.users) fsQuery = fsQuery.where('userID', 'in', query.users);
 
