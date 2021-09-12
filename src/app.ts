@@ -8,7 +8,14 @@ import ordersRouter from './routes/orders';
 
 const app = express();
 
-app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
+const whitelist = process.env.CORS_WHITELIST?.split(', ');
+app.use(
+  cors({
+    credentials: true,
+    origin: (origin, callback) =>
+      origin && whitelist?.indexOf(origin) !== -1 ? callback(null, true) : callback(new Error('Not allowed by CORS')),
+  })
+);
 app.use(express.json());
 app.use(cookieParser());
 
