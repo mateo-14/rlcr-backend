@@ -5,6 +5,7 @@ import { addOrder, getOrder, getOrders, getAllOrders } from '../controllers/orde
 import verifyToken from '../middlewares/verifyToken';
 import { sanitizeCredits } from '../services/settings';
 import validator from 'validator';
+import isAdmin from '../middlewares/admin';
 const router = Router();
 const addOrderSchema: Schema = {
   paymentMethodID: {
@@ -100,7 +101,7 @@ const addOrderSchema: Schema = {
 // Routes
 router.post('/', verifyToken, checkSchema(addOrderSchema), addOrder);
 router.get('/', verifyToken, getOrders);
-router.get('/all', getAllOrders);
+router.get('/all', verifyToken, isAdmin, getAllOrders);
 router.get('/:id', verifyToken, getOrder);
 
 export default router;
