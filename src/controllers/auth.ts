@@ -15,7 +15,12 @@ export const login = async (req: Request, res: Response) => {
 
       const expireTime = parseInt(process.env.TOKEN_EXP_TIME!) * 60000;
       const token = await generateToken(user.id, expireTime);
-      res.cookie('token', token, { httpOnly: true, expires: new Date(Date.now() + expireTime), sameSite: 'none' });
+      res.cookie('token', token, {
+        httpOnly: true,
+        expires: new Date(Date.now() + expireTime),
+        sameSite: 'none',
+        secure: true,
+      });
       res.json({
         avatar: user.avatar,
         username: `${user.username}#${user.discriminator}`,
