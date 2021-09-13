@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { client } from '../ds';
-import { addOrUpdate, getAll, getData } from '../services/users';
+import { addOrUpdate, getAll, getByID, getData } from '../services/users';
 
 export const getUser = (req: Request, res: Response) => {
   client.users
@@ -24,6 +24,15 @@ export const getUser = (req: Request, res: Response) => {
 export const getAllUsers = (req: Request, res: Response) => {
   getAll()
     .then((users) => res.json(users))
+    .catch((err) => {
+      console.error(err);
+      res.sendStatus(500);
+    });
+};
+
+export const getUserByID = (req: Request, res: Response) => {
+  getByID(req.params.id)
+    .then((user) => res.json(user))
     .catch((err) => {
       console.error(err);
       res.sendStatus(500);

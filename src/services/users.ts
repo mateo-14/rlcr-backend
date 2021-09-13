@@ -28,3 +28,14 @@ export const getAll = () => {
     .get()
     .then((querySnap) => querySnap.docs.map((docSnap) => ({ ...docSnap.data(), id: docSnap.id })));
 };
+
+export const getByID = (id: string) => {
+  return firestore
+    .collection('users')
+    .doc(id)
+    .get()
+    .then((docSnap) => {
+      if (!docSnap.exists) throw new Error('Users does not exists');
+      return docSnap.data();
+    });
+};

@@ -46,7 +46,7 @@ const addOrderSchema: Schema = {
   },
   account: {
     in: ['body'],
-    isLength: { options: { min: 3, max: 200 } },
+    isLength: { options: { min: 3, max: 80 } },
     errorMessage: 'Ingresá una cuenta válida',
   },
   dni: {
