@@ -2,7 +2,7 @@ import firestore from '../firestore';
 import { customAlphabet } from 'nanoid';
 const nanoid = customAlphabet(process.env.NANOID_ALPHABET!, 30);
 
-export const generateToken = (userID: string, expTime: number) => {
+export function generateToken(userID: string, expTime: number) {
   const token = nanoid();
   return firestore
     .collection('tokens')
@@ -13,9 +13,9 @@ export const generateToken = (userID: string, expTime: number) => {
       user: firestore.collection('users').doc(userID),
     })
     .then(() => token);
-};
+}
 
-export const verify = (token: string) => {
+export function verify(token: string) {
   return firestore
     .collection('tokens')
     .doc(token)
@@ -33,4 +33,4 @@ export const verify = (token: string) => {
         throw new Error('Token not exists');
       }
     });
-};
+}

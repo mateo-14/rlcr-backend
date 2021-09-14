@@ -3,7 +3,7 @@ import * as discord from '../ds';
 import { addOrUpdate, getData } from '../services/users';
 import { generateToken } from '../services/tokens';
 
-export const login = async (req: Request, res: Response) => {
+export async function login(req: Request, res: Response) {
   if (req.body.code) {
     try {
       const accessToken = await discord.oauth2ByCode(req.body.code);
@@ -32,12 +32,9 @@ export const login = async (req: Request, res: Response) => {
       res.sendStatus(401);
     }
   }
-};
+}
 
-export const logout = (_: Request, res: Response) => {
+export function logout(_: Request, res: Response) {
   res.cookie('token', '', { httpOnly: true, expires: new Date(0) });
   res.sendStatus(200);
-};
-function oauth2ByCode() {
-  throw new Error('Function not implemented.');
 }

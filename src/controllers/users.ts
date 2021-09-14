@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { client } from '../ds';
 import { addOrUpdate, getAll, getByID, getData } from '../services/users';
 
-export const getUser = (req: Request, res: Response) => {
+export function getUser(req: Request, res: Response) {
   client.users
     .fetch(req.userID)
     .then(async (user) => {
@@ -19,22 +19,22 @@ export const getUser = (req: Request, res: Response) => {
       console.error(err);
       res.sendStatus(401);
     });
-};
+}
 
-export const getAllUsers = (req: Request, res: Response) => {
+export function getAllUsers(req: Request, res: Response) {
   getAll()
     .then((users) => res.json(users))
     .catch((err) => {
       console.error(err);
       res.sendStatus(500);
     });
-};
+}
 
-export const getUserByID = (req: Request, res: Response) => {
+export function getUserByID(req: Request, res: Response) {
   getByID(req.params.id)
     .then((user) => res.json(user))
     .catch((err) => {
       console.error(err);
       res.sendStatus(500);
     });
-};
+}

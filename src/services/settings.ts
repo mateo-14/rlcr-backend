@@ -3,7 +3,7 @@ import firestore from '../firestore';
 
 let cachedSettings: Settings | undefined;
 
-const getSettings = (): Promise<Settings> => {
+export function getSettings(): Promise<Settings> {
   return new Promise(async (resolve, reject) => {
     if (cachedSettings) return resolve(cachedSettings);
     try {
@@ -17,12 +17,10 @@ const getSettings = (): Promise<Settings> => {
     }
     reject('Settings does not exists');
   });
-};
+}
 
-export const sanitizeCredits = async (credits: number, mode: OrderMode) => {
+export async function sanitizeCredits(credits: number, mode: OrderMode) {
   const settings = await getSettings();
   const max = mode === OrderMode.Buy ? settings?.maxBuy : settings?.maxSell;
   return Math.max(100, Math.min(Math.round(credits / 10) * 10, max));
-};
-
-export default { getSettings, sanitizeCredits };
+}

@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { verify } from '../services/tokens';
 
-const verifyToken = (req: Request, res: Response, next: NextFunction) => {
+export default function verifyToken(req: Request, res: Response, next: NextFunction) {
   if (req.cookies?.token) {
     return verify(req.cookies.token)
       .then((userID) => {
@@ -15,6 +15,4 @@ const verifyToken = (req: Request, res: Response, next: NextFunction) => {
       });
   }
   res.sendStatus(401);
-};
-
-export default verifyToken;
+}

@@ -5,7 +5,7 @@ import { sendNewOrderMsg } from '../ds';
 import * as ordersService from '../services/orders';
 import { GetAllOrdersQuery, getAll } from '../services/orders';
 
-export const addOrder = async (req: Request, res: Response) => {
+export async function addOrder(req: Request, res: Response) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.mapped() });
@@ -21,9 +21,9 @@ export const addOrder = async (req: Request, res: Response) => {
     console.error(err);
     res.status(500).send(err);
   }
-};
+}
 
-export const getOrders = (req: Request, res: Response) => {
+export function getOrders(req: Request, res: Response) {
   if (typeof req.query.startAfter === 'string' || !req.query.startAfter) {
     ordersService
       .getOrders(req.userID, req.query.startAfter)
@@ -32,9 +32,9 @@ export const getOrders = (req: Request, res: Response) => {
   } else {
     res.sendStatus(400);
   }
-};
+}
 
-export const getOrder = (req: Request, res: Response) => {
+export function getOrder(req: Request, res: Response) {
   ordersService
     .getOrder(req.userID, req.params.id)
     .then((order) => {
@@ -43,9 +43,9 @@ export const getOrder = (req: Request, res: Response) => {
     .catch(() => {
       res.sendStatus(404);
     });
-};
+}
 
-export const getAllOrders = (req: Request, res: Response) => {
+export function getAllOrders(req: Request, res: Response) {
   const query = req.query as GetAllOrdersQuery;
   if (query.status) query.status = query.status.map((status) => parseInt(status.toString()));
 
@@ -57,4 +57,4 @@ export const getAllOrders = (req: Request, res: Response) => {
       console.error(err);
       res.sendStatus(500);
     });
-};
+}

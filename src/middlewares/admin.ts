@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { getData } from '../services/users';
 
-const isAdmin = async (req: Request, res: Response, next: NextFunction) => {
+export default async function isAdmin(req: Request, res: Response, next: NextFunction) {
   const userId = req.userID;
   try {
     const userData = await getData(userId);
@@ -13,6 +13,4 @@ const isAdmin = async (req: Request, res: Response, next: NextFunction) => {
   } catch {
     res.sendStatus(404);
   }
-};
-
-export default isAdmin;
+}
