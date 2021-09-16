@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
-import { start } from 'repl';
 import { sendNewOrderMsg } from '../ds';
 import * as ordersService from '../services/orders';
 import { GetAllOrdersQuery, getAll } from '../services/orders';

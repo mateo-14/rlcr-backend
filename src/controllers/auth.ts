@@ -35,6 +35,6 @@ export async function login(req: Request, res: Response) {
 }
 
 export function logout(_: Request, res: Response) {
-  res.cookie('token', '', { httpOnly: true, expires: new Date(0) });
+  res.cookie('token', '', { httpOnly: true, expires: new Date(0), sameSite: 'none', secure: true });
   res.sendStatus(200);
 }
