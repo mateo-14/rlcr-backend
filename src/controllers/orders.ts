@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 import { sendNewOrderMsg } from '../ds';
 import * as ordersService from '../services/orders';
-import { GetAllOrdersQuery, getAll } from '../services/orders';
+import { GetAllOrdersQuery, getAll, update } from '../services/orders';
 
 export async function addOrder(req: Request, res: Response) {
   const errors = validationResult(req);
@@ -56,4 +56,16 @@ export function getAllOrders(req: Request, res: Response) {
       console.error(err);
       res.sendStatus(500);
     });
+}
+
+export function updateOrder(req: Request, res: Response) {
+  if (req.body.status && req.body.userID) {
+    return update(req.body.userID, req.params.id, { status: req.body.status })
+      .then((order) => res.json(order))
+      .catch((err) => {
+        console.error(err);
+        res.sendStatus(404);
+      });
+  }
+  res.sendStatus(400);
 }

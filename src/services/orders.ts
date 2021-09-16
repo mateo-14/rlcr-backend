@@ -81,3 +81,11 @@ export function getAll(query: GetAllOrdersQuery): Promise<Order[]> {
 
   return fsQuery.get().then((querySnap) => querySnap.docs.map((docSnap) => orderSnapshotToOrder(docSnap)));
 }
+
+export function update(userID: string, id: string, data: any): Promise<Order> {
+  const ref = firestore.collection(`users/${userID}/orders`).doc(id);
+  return ref
+    .update(data)
+    .then(() => ref.get())
+    .then((docSnap) => orderSnapshotToOrder(docSnap));
+}

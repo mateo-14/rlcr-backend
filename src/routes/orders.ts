@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { checkSchema, Schema } from 'express-validator';
 import { OrderMode, PaymentMethodID } from '../../@types';
-import { addOrder, getOrder, getOrders, getAllOrders } from '../controllers/orders';
+import { addOrder, getOrder, getOrders, getAllOrders, updateOrder } from '../controllers/orders';
 import verifyToken from '../middlewares/verifyToken';
 import { sanitizeCredits } from '../services/settings';
 import validator from 'validator';
@@ -103,5 +103,6 @@ router.post('/', verifyToken, checkSchema(addOrderSchema), addOrder);
 router.get('/', verifyToken, getOrders);
 router.get('/all', verifyToken, isAdmin, getAllOrders);
 router.get('/:id', verifyToken, getOrder);
+router.put('/:id', verifyToken, isAdmin, updateOrder);
 
 export default router;

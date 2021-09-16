@@ -94,7 +94,7 @@ const commands = [
 ];
 
 const rest = new REST({ version: '9' }).setToken(process.env.CLIENT_TOKEN!);
-(async () => {
+/* (async () => {
   try {
     console.log('Started refreshing application (/) commands.');
     await rest.put(Routes.applicationGuildCommands(process.env.CLIENT_ID!, process.env.GUILD_ID!), { body: commands });
@@ -103,7 +103,7 @@ const rest = new REST({ version: '9' }).setToken(process.env.CLIENT_TOKEN!);
   } catch (error) {
     console.error(error);
   }
-})();
+})(); */
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 
