@@ -8,14 +8,13 @@ import ordersRouter from './routes/orders';
 
 const app = express();
 
-const whitelist = process.env.CORS_WHITELIST?.split(', ');
 app.use(
   cors({
     credentials: true,
     origin: (origin, callback) =>
       !origin
         ? callback(null, true)
-        : whitelist?.indexOf(origin) !== -1
+        : process.env.FRONTEND_URL === origin
         ? callback(null, true)
         : callback(new Error('Not allowed by CORS')),
   })
