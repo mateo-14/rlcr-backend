@@ -18,7 +18,9 @@ export async function createOrder(order: Order): Promise<Order> {
   order = {
     ...order,
     createdAt: Date.now(),
-    price: (order.mode === OrderMode.Buy ? settings.creditBuyValue : settings.creditSellValue) * order.credits,
+    price: Math.ceil(
+      (order.mode === OrderMode.Buy ? settings.creditBuyValue : settings.creditSellValue) * order.credits
+    ),
     status: OrderStatus.Pending,
   };
   const id = nanoid();
