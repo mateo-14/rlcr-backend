@@ -152,7 +152,7 @@ client.on('ready', async (client) => {
 }); */
 
 const sendNewOrderMsg = (order: Order) => {
-  client.users.fetch(order.userID).then((user) => {
+  client.users.fetch(order.userID).then(async (user) => {
     const orderURL = `${process.env.FRONTEND_URL!}/orders/${order.id}`;
     const embed = new MessageEmbed()
       .setColor('#8B5CF6')
@@ -169,32 +169,38 @@ const sendNewOrderMsg = (order: Order) => {
     const row = new MessageActionRow().addComponents(
       new MessageButton().setLabel('Ver pedido').setStyle('LINK').setURL(orderURL)
     );
-    user.send({ embeds: [embed], components: [row] });
 
-    // Notify moderators
-    const adminOrderUrl = `${process.env.FRONTEND_URL!}/admin/orders?id=${order.id}`;
-    const moderatorEmbed = new MessageEmbed()
-      .setColor('#8B5CF6')
-      .setTitle(`Nuevo pedido (${order.id})`)
-      .setURL(adminOrderUrl)
-      .setTimestamp(new Date()).setDescription(`**__El usuario ${user.username}#${user.discriminator} (${
-      user.id
-    }) ha realizado un pedido de ${order.mode === 0 ? 'compra' : 'venta'} de ${order.credits} créditos a ARS$ ${
-      order.price
-    }__**
+    try {
+      await user.send({ embeds: [embed], components: [row] });
+
+      // Notify moderators
+      const adminOrderUrl = `${process.env.FRONTEND_URL!}/admin/orders?id=${order.id}`;
+      const moderatorEmbed = new MessageEmbed()
+        .setColor('#8B5CF6')
+        .setTitle(`Nuevo pedido (${order.id})`)
+        .setURL(adminOrderUrl)
+        .setTimestamp(new Date()).setDescription(`**El usuario ${user.username}#${user.discriminator} (${
+        user.id
+      }) ha realizado un pedido de ${order.mode === 0 ? 'compra' : 'venta'} de ${order.credits} créditos a ARS$ ${
+        order.price
+      }**
     `);
 
-    const moderatorRow = new MessageActionRow().addComponents(
-      new MessageButton().setLabel('Ver pedido').setStyle('LINK').setURL(adminOrderUrl)
-    );
+      const moderatorRow = new MessageActionRow().addComponents(
+        new MessageButton().setLabel('Ver pedido').setStyle('LINK').setURL(adminOrderUrl)
+      );
 
-    const guild = client.guilds.cache.get(process.env.GUILD_ID!);
-    const members = guild?.members.cache.filter((member) => member.roles.cache.has(process.env.DS_MODERATOR_ROLE_ID!));
-    members?.forEach(({ user }) => {
-      if (!user.bot) {
-        user.send({ embeds: [moderatorEmbed], components: [moderatorRow] });
-      }
-    });
+      const guild = client.guilds.cache.get(process.env.GUILD_ID!);
+      await guild?.members.fetch();
+      const members = guild?.members.cache.filter((member) =>
+        member.roles.cache.has(process.env.DS_MODERATOR_ROLE_ID!)
+      );
+      members?.forEach(({ user }) => {
+        if (!user.bot) {
+          user.send({ embeds: [moderatorEmbed], components: [moderatorRow] });
+        }
+      });
+    } catch {}
   });
 };
 
