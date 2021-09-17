@@ -4,7 +4,7 @@ import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v9';
 import { URLSearchParams } from 'url';
 import fetch from 'node-fetch';
-
+/* 
 const commands = [
   {
     name: 'pedidos',
@@ -15,7 +15,7 @@ const commands = [
     description: 'Muestra información del pedido',
     options: [{ type: 3, name: 'id', description: 'ID del pedido', required: true }],
   },
-  /*  {
+ {
     name: 'pedir',
     description: 'Realiza un pedido',
     options: [
@@ -90,8 +90,8 @@ const commands = [
         required: true,
       },
     ],
-  }, */
-];
+  }, 
+];*/
 
 const rest = new REST({ version: '9' }).setToken(process.env.CLIENT_TOKEN!);
 /* (async () => {
@@ -105,13 +105,13 @@ const rest = new REST({ version: '9' }).setToken(process.env.CLIENT_TOKEN!);
   }
 })(); */
 
-const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
+const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS] });
 
-client.on('ready', (client) => {
+client.on('ready', async (client) => {
   console.log(`Logged in as ${client.user.tag}!`);
 });
 
-client.on('interactionCreate', async (interaction) => {
+/* client.on('interactionCreate', async (interaction) => {
   if (interaction.isCommand()) {
     if (interaction.commandName === 'pedidos') {
       const ordersURL = `${process.env.FRONTEND_URL!}/orders`;
@@ -149,7 +149,7 @@ client.on('interactionCreate', async (interaction) => {
     } else if (interaction.commandName === 'pedir') {
     }
   }
-});
+}); */
 
 const sendNewOrderMsg = (order: Order) => {
   client.users.fetch(order.userID).then((user) => {
@@ -160,7 +160,7 @@ const sendNewOrderMsg = (order: Order) => {
       .setURL(orderURL)
       .setTimestamp(new Date()).setDescription(`**__Has realizado un pedido de ${
       order.mode === 0 ? 'compra' : 'venta'
-    } de ${order.credits} créditos a ARS$ ${'precio'}__**\n
+    } de ${order.credits} créditos a ARS$ ${order.price}__**\n
       • En breve nos contactaremos por DM para realizar la transacción.
       • Si tenés algún problema o necesitas ayuda usa el comando **/ayuda** o contacta con un moderador en nuestro canal de discord.
       • Usa el comando **/pedidos** para ver la lista con los últimos pedidos.
@@ -169,8 +169,32 @@ const sendNewOrderMsg = (order: Order) => {
     const row = new MessageActionRow().addComponents(
       new MessageButton().setLabel('Ver pedido').setStyle('LINK').setURL(orderURL)
     );
-
     user.send({ embeds: [embed], components: [row] });
+
+    // Notify moderators
+    const adminOrderUrl = `${process.env.FRONTEND_URL!}/admin/orders?id=${order.id}`;
+    const moderatorEmbed = new MessageEmbed()
+      .setColor('#8B5CF6')
+      .setTitle(`Nuevo pedido (${order.id})`)
+      .setURL(adminOrderUrl)
+      .setTimestamp(new Date()).setDescription(`**__El usuario ${user.username}#${user.discriminator} (${
+      user.id
+    }) ha realizado un pedido de ${order.mode === 0 ? 'compra' : 'venta'} de ${order.credits} créditos a ARS$ ${
+      order.price
+    }__**
+    `);
+
+    const moderatorRow = new MessageActionRow().addComponents(
+      new MessageButton().setLabel('Ver pedido').setStyle('LINK').setURL(adminOrderUrl)
+    );
+
+    const guild = client.guilds.cache.get(process.env.GUILD_ID!);
+    const members = guild?.members.cache.filter((member) => member.roles.cache.has(process.env.DS_MODERATOR_ROLE_ID!));
+    members?.forEach(({ user }) => {
+      if (!user.bot) {
+        user.send({ embeds: [moderatorEmbed], components: [moderatorRow] });
+      }
+    });
   });
 };
 
