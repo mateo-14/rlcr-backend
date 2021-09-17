@@ -36,4 +36,12 @@ declare global {
     createdAt: number;
     status: OrderStatus;
   }
+
+  export interface User {
+    id: string;
+    username: string;
+    avatar: string;
+    discriminator: string;
+    ip: string;
+  }
 }

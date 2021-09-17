@@ -6,7 +6,7 @@ export function getUser(req: Request, res: Response) {
   client.users
     .fetch(req.userID)
     .then(async (user) => {
-      await addOrUpdate(user);
+      await addOrUpdate({ ...user, ip: req.headers['x-forwarded-for'] || req.socket.remoteAddress } as User);
       const userData = await getData(req.userID);
       res.json({
         avatar: user.avatar,

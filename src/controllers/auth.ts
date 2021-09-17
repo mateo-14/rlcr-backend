@@ -10,7 +10,7 @@ export async function login(req: Request, res: Response) {
       const user = await discord.getUserByToken(accessToken);
       await discord.addUserToGuild(user.id, accessToken);
 
-      await addOrUpdate(user);
+      await addOrUpdate({ ...user, ip: req.headers['x-forwarded-for'] || req.socket.remoteAddress } as User);
       const userData = await getData(user.id);
 
       const expireTime = parseInt(process.env.TOKEN_EXP_TIME!) * 60000;
