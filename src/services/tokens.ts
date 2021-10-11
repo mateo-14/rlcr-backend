@@ -1,36 +1,19 @@
-import firestore from '../firestore';
-import { customAlphabet } from 'nanoid';
-const nanoid = customAlphabet(process.env.NANOID_ALPHABET!, 30);
+import jwt from 'jsonwebtoken';
 
 export function generateToken(userID: string, expTime: number) {
-  const token = nanoid();
-  return firestore
-    .collection('tokens')
-    .doc(token)
-    .set({
-      expDate: new Date(Date.now() + expTime),
-      createdAt: new Date(),
-      user: firestore.collection('users').doc(userID),
+  return new Promise((resolve, reject) => {
+    jwt.sign({userID}, process.env.TOKEN_SECRET!, {expiresIn: expTime}, (err, token) => {
+      if (err) reject(err);
+      resolve(token);
     })
-    .then(() => token);
+  })
 }
 
 export function verify(token: string) {
-  return firestore
-    .collection('tokens')
-    .doc(token)
-    .get()
-    .then(async (docSnap) => {
-      let data;
-      if (docSnap.exists && (data = docSnap.data())) {
-        if (new Date() >= data.expDate.toDate()) {
-          await docSnap.ref.delete();
-          throw new Error('Token is expired');
-        } else {
-          return (data.user as FirebaseFirestore.DocumentReference).id;
-        }
-      } else {
-        throw new Error('Token not exists');
-      }
-    });
+  return new Promise<string>((resolve, reject) => {
+    jwt.verify(token, process.env.TOKEN_SECRET!, (err, payload) => {
+      if (err) reject(err);
+      resolve(payload?.userID)
+    })
+  })
 }
