@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken';
+import * as jwt from 'jsonwebtoken';
 
 export function generateToken(userID: string, expTime: number) {
   return new Promise((resolve, reject) => {

@@ -42,6 +42,5 @@ declare global {
     username: string;
     avatar: string;
     discriminator: string;
-    ip: string;
   }
 }

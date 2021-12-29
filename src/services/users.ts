@@ -5,7 +5,7 @@ export function addOrUpdate(user: User) {
     .collection('users')
     .doc(user.id)
     .set(
-      { username: user.username, avatar: user.avatar, discriminator: user.discriminator, ip: user.ip },
+      { username: user.username, avatar: user.avatar, discriminator: user.discriminator },
       { merge: true }
     );
 }
