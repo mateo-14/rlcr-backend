@@ -11,12 +11,10 @@ const app = express();
 app.use(
   cors({
     credentials: true,
-    origin: (origin, callback) =>
-      !origin
-        ? callback(null, true)
-        : process.env.FRONTEND_URL === origin
-        ? callback(null, true)
-        : callback(new Error('Not allowed by CORS')),
+    origin: (origin, callback) => {
+      if (!origin || process.env.FRONTEND_URL === origin) return callback(null, true);
+      callback(new Error('Not allowed by CORS'));
+    },
   })
 );
 
